@@ -13,7 +13,7 @@
             "days": ["Monday", "Thursday", "Saturday"],
             "days_before": 3,
             "channel": "#bot-tester",
-            "notify_channel": true,
+            "notify_channel": false,
             "notify_keyholders": false,
             "keyholder_marks": ["🔑"],
             "volunteer_threshold": 4

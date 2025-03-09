@@ -51,7 +51,7 @@ def get_config() -> Config:
         raw_config = os.getenv("calender_bot_config")
         data_dict = None
         if raw_config:
-            data_dict = json.load(raw_config)
+            data_dict = json.loads(raw_config)
         else:
             data_dict = json.load(file)
 
