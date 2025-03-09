@@ -101,7 +101,7 @@ def send_special_note_message(config: MessageConfig, day_of_week, shift_date, sp
 def send_bike_school_message(config: MessageConfig, day_of_week, shift_date, special_notes):
     """Sends a message to a slack channel with any notes for the shift left in the calender"""
     message = "<!channel> " if config.notify_channel else ""
-    message += f"Reminder Bike Skool is {get_day_formatted(day_of_week, shift_date)}! There are the following notes:\n"
+    message += f"Reminder Bike Skool is {get_day_formatted(day_of_week, shift_date)}! These are the notes:\n"
 
     for special_note in special_notes:
         message += f"*•* {special_note}\n"
