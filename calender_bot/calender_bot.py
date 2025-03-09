@@ -2,8 +2,9 @@ import os
 import requests
 from dateutil.parser import parse
 from datetime import date, timedelta
+from typing import Callable
 
-from calender_bot.slack import send_volunteer_warning_message, send_special_note_message, send_message
+from calender_bot.slack import send_volunteer_warning_message, send_special_note_message, send_bike_school_message, send_message
 from calender_bot.config import * # yeah this is kinda awful but I don't feel like improving it with a real config file
 
 ## shamelessly stolen from gspread
@@ -171,8 +172,56 @@ def get_voluneers_for_date(date, all_cells):
 
     return all_volunteers, special_rows
 
-def get_has_keyholder(volunteers):
-    return any(keyholder_mark in volunteer.lower() for keyholder_mark in KEYHOLDER_MARKS for volunteer in volunteers)
+def get_has_keyholder(volunteers, config: MessageConfig):
+    return any(keyholder_mark in volunteer.lower() for keyholder_mark in config.keyholder_marks for volunteer in volunteers)
+
+def send_shift_warning_messages(config: MessageConfig, all_cells, today: date):
+    date_to_check = today + timedelta(days=config.days_before)
+    day_of_week = DAYS_OF_WEEK[date_to_check.weekday()]
+    
+    if day_of_week in config.days:
+        volunteers, _ = get_voluneers_for_date(date_to_check, all_cells)
+        has_keyholder = get_has_keyholder(volunteers, config)
+
+        if len(volunteers) < config.volunteer_threshold or not has_keyholder:
+            send_volunteer_warning_message(config, day_of_week, date_to_check, volunteers, has_keyholder)
+
+def send_shift_notes_messages(config: MessageConfig, all_cells, today: date):
+    date_to_check = today + timedelta(days=config.days_before)
+    day_of_week = DAYS_OF_WEEK[date_to_check.weekday()]
+
+    if day_of_week in config.days:
+        _, special_cells = get_voluneers_for_date(date_to_check, all_cells)
+
+        if special_cells:
+            send_special_note_message(config, day_of_week, date_to_check, special_cells)
+
+
+def is_bike_school(special_cells, config: MessageConfig):
+    lower_special_cells = set([cell.lower() for cell in special_cells])
+    lower_school_marks = [mark.lower() for mark in config.bikeschool_marks]
+
+    for cell in lower_special_cells:
+        for mark in lower_school_marks:
+            if mark in cell:
+                return True
+    return False
+
+def send_bike_school_reminder_messages(config: MessageConfig, all_cells, today: date):
+    date_to_check = today + timedelta(days=config.days_before)
+    day_of_week = DAYS_OF_WEEK[date_to_check.weekday()]
+
+    if day_of_week in config.days:
+        _, special_cells = get_voluneers_for_date(date_to_check, all_cells)
+
+        if is_bike_school(special_cells, config):
+            send_bike_school_message(config, day_of_week, date_to_check, special_cells)
+
+        
+
+def send_messages_of_type(message_configs: MessageConfig, message_sender: Callable, all_cells, today: date):
+    for message_config in message_configs:
+        message_sender(message_config, all_cells, today)
 
 def send_slack_messages(today = date.today()):
     google_api_key = os.getenv('google_api_key')
@@ -184,23 +233,8 @@ def send_slack_messages(today = date.today()):
     # # if a cell is not a date, leave as is
     convert_dates(all_cells)
 
-    for days_out in SHIFT_VOLUNTEER_WARNING_DAYS:
-        date_to_check = today + timedelta(days=days_out)
-        day_of_week = DAYS_OF_WEEK[date_to_check.weekday()]
+    config = get_config()
 
-        if day_of_week in SHIFT_DAYS:
-            volunteers, _ = get_voluneers_for_date(today + timedelta(days=days_out), all_cells)
-            has_keyholder = get_has_keyholder(volunteers)
-
-            if len(volunteers) < VOLUNTEER_THRESHOLD or not has_keyholder:
-                send_volunteer_warning_message(day_of_week, date_to_check, volunteers, has_keyholder)
-
-    for days_out in SHIFT_SPECIAL_NOTES_DAYS:
-        date_to_check = today + timedelta(days=days_out)
-        day_of_week = DAYS_OF_WEEK[date_to_check.weekday()]
-
-        if day_of_week in SHIFT_DAYS:
-            _, special_cells = get_voluneers_for_date(today + timedelta(days=days_out), all_cells)
-
-            if special_cells:
-                send_special_note_message(day_of_week, date_to_check, special_cells)
+    send_messages_of_type(config.shift_warning, send_shift_warning_messages, all_cells, today)
+    send_messages_of_type(config.shift_notes, send_shift_notes_messages, all_cells, today)
+    send_messages_of_type(config.bike_school_reminder, send_bike_school_reminder_messages, all_cells, today)
