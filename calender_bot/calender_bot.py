@@ -198,6 +198,7 @@ def send_shift_notes_messages(config: MessageConfig, all_cells, today: date):
 
 
 def is_bike_school(special_cells, config: MessageConfig):
+    """checks if any of the given special cells contains any of the marks of a bike school event"""
     lower_special_cells = set([cell.lower() for cell in special_cells])
     lower_school_marks = [mark.lower() for mark in config.bikeschool_marks]
 
@@ -208,6 +209,7 @@ def is_bike_school(special_cells, config: MessageConfig):
     return False
 
 def send_bike_school_reminder_messages(config: MessageConfig, all_cells, today: date):
+    """Sends a bike school reminder based on the message config"""
     date_to_check = today + timedelta(days=config.days_before)
     day_of_week = DAYS_OF_WEEK[date_to_check.weekday()]
 
@@ -220,6 +222,7 @@ def send_bike_school_reminder_messages(config: MessageConfig, all_cells, today: 
         
 
 def send_messages_of_type(message_configs: MessageConfig, message_sender: Callable, all_cells, today: date):
+    """For each configured message in the message type, check if a message needs to be sent (and send it if needed)"""
     for message_config in message_configs:
         message_sender(message_config, all_cells, today)
 
@@ -235,6 +238,7 @@ def send_slack_messages(today = date.today()):
 
     config = get_config()
 
+    # send a message of each message type based on config for those message types
     send_messages_of_type(config.shift_warning, send_shift_warning_messages, all_cells, today)
     send_messages_of_type(config.shift_notes, send_shift_notes_messages, all_cells, today)
     send_messages_of_type(config.bike_school_reminder, send_bike_school_reminder_messages, all_cells, today)
