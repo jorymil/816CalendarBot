@@ -1,0 +1,55 @@
+{
+    "shift_warning": [
+        {
+            "days": ["Monday", "Thursday", "Saturday"],
+            "days_before": 6,
+            "channel": "#bot-tester",
+            "notify_channel": false,
+            "notify_keyholders": false,
+            "keyholder_marks": ["🔑"],
+            "volunteer_threshold": 4
+        },
+        {
+            "days": ["Monday", "Thursday", "Saturday"],
+            "days_before": 3,
+            "channel": "#bot-tester",
+            "notify_channel": false,
+            "notify_keyholders": false,
+            "keyholder_marks": ["🔑"],
+            "volunteer_threshold": 4
+        },
+        {
+            "days": ["Monday", "Thursday", "Saturday"],
+            "days_before": 0,
+            "channel": "#bot-tester",
+            "notify_channel": false,
+            "notify_keyholders": false,
+            "keyholder_marks": ["🔑"],
+            "volunteer_threshold": 4
+        }
+    ],
+    "shift_notes": [
+        {
+            "days": ["Monday", "Thursday", "Saturday"],
+            "days_before": 0,
+            "channel": "#bot-tester",
+            "notify_channel": false
+        }
+    ],
+    "bike_school_reminder": [
+        {
+            "days": ["Tuesday"],
+            "days_before": 7,
+            "channel": "#bot-tester",
+            "notify_channel": false,
+            "bikeschool_marks": ["skool", "school"]
+        },
+        {
+            "days": ["Tuesday"],
+            "days_before": 0,
+            "channel": "#bot-tester",
+            "notify_channel": false,
+            "bikeschool_marks": ["skool", "school"]
+        }
+    ]
+}

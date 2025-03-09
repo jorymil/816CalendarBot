@@ -15,6 +15,7 @@ def calender_bot(myTimer: func.TimerRequest) -> None:
 
 @app.route(route="http_trigger_bot", auth_level=func.AuthLevel.ANONYMOUS)
 def http_trigger_bot(req: func.HttpRequest) -> func.HttpResponse:
+    """Function for testing purposes only. Used to debug and force runs on different days"""
     logging.info('Python HTTP trigger function processed a request.')
 
     delta = req.params.get('delta')
@@ -26,5 +27,5 @@ def http_trigger_bot(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse(f"Hello. Sending as if today was {today}")
     else:
         send_slack_messages()
-    
+
     return func.HttpResponse(f"Hello. Sending as if today was today")
