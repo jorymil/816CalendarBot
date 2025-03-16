@@ -83,7 +83,7 @@ def get_cell_is_date(cell):
 # returns true if the text of a cell is striked through, false otherwise
 def get_cell_is_strkethrough(cell):
     try:
-        if cell['effectiveFormat']['textFormat']['strikethrough'] == 'true':
+        if cell['effectiveFormat']['textFormat']['strikethrough'] == True:
             return True
     except Exception:
         pass # yeah this is lazy but it works
