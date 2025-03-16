@@ -80,6 +80,14 @@ def get_cell_is_date(cell):
         pass # yeah this is lazy but it works
     return False
 
+# returns true if the text of a cell is striked through, false otherwise
+def get_cell_is_strkethrough(cell):
+    try:
+        if cell['effectiveFormat']['textFormat']['strikethrough'] == True:
+            return True
+    except Exception:
+        pass # yeah this is lazy but it works
+    return False
 
 def get_sheet_data(api_key, sheet_id):
     base_url = f"https://sheets.googleapis.com/v4/spreadsheets/{sheet_id}"
@@ -96,7 +104,7 @@ def get_sheet_data(api_key, sheet_id):
     sheet_range = get_entire_sheet_range(num_rows, num_cols)
 
     # what fields to return from the third api call
-    field_mask = "fields=sheets.data.rowData.values(effectiveFormat.backgroundColor,dataValidation,formattedValue)"
+    field_mask = "fields=sheets.data.rowData.values(effectiveFormat(backgroundColor,textFormat.strikethrough),dataValidation,formattedValue)"
     r = requests.get(f"{base_url}?{key_param}&ranges={sheet_range}&{field_mask}")
 
     row_data = r.json()['sheets'][0]['data'][0]['rowData']
@@ -109,9 +117,10 @@ def get_sheet_data(api_key, sheet_id):
         for cell in row['values']:
             is_gray = get_cell_is_gray(cell)
             is_date = get_cell_is_date(cell)
+            is_strikethrough = get_cell_is_strkethrough(cell)
             value = cell['formattedValue'] if 'formattedValue' in cell else ''
 
-            new_row.append({"is_gray": is_gray, "is_date": is_date, "value": value})
+            new_row.append({"is_gray": is_gray, "is_date": is_date, "is_strikethrough": is_strikethrough, "value": value})
 
         data.append(new_row)
 
@@ -157,7 +166,7 @@ def get_voluneers_for_date(date, all_cells):
         # check if the cell is special or contains volunteer signup info
         if not cell['is_gray']:
             special_rows.append(cell['value'])
-        else:
+        elif not cell['is_strikethrough']:
             # get volunteers names. The cell may contain multiple volunteers sigining up separated
             # by commas so split by commas and then remove any leading/trailing whitespace before
             # adding the volunteers to the volunteers list
