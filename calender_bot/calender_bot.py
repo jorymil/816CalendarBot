@@ -74,7 +74,7 @@ def get_cell_is_gray(cell):
 # returns true if the cell is a date, false otherwise
 def get_cell_is_date(cell):
     try:
-        if cell['dataValidation']['condition']['type'] == 'DATE_IS_VALID':
+        if cell['effectiveFormat']['numberFormat']['type'] == 'DATE':
             return True
     except Exception:
         pass # yeah this is lazy but it works
@@ -104,7 +104,7 @@ def get_sheet_data(api_key, sheet_id):
     sheet_range = get_entire_sheet_range(num_rows, num_cols)
 
     # what fields to return from the third api call
-    field_mask = "fields=sheets.data.rowData.values(effectiveFormat(backgroundColor,textFormat.strikethrough),dataValidation,formattedValue)"
+    field_mask = "fields=sheets.data.rowData.values(effectiveFormat(numberFormat,backgroundColor,textFormat.strikethrough),formattedValue)"
     r = requests.get(f"{base_url}?{key_param}&ranges={sheet_range}&{field_mask}")
 
     row_data = r.json()['sheets'][0]['data'][0]['rowData']
@@ -130,7 +130,7 @@ def get_sheet_data(api_key, sheet_id):
 def convert_dates(all_cells):
     for row in range(len(all_cells)):
         for col in range(len(all_cells[row])):
-            if all_cells[row][col]["is_date"]:
+            if all_cells[row][col]["is_date"] and len(all_cells[row][col]["value"]) > 0:
                 all_cells[row][col]["value"] = parse(all_cells[row][col]["value"]).date()
 
 def get_date_location(date, all_cells):
