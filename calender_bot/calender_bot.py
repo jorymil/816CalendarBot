@@ -130,7 +130,7 @@ def get_sheet_data(api_key, sheet_id):
 def convert_dates(all_cells):
     for row in range(len(all_cells)):
         for col in range(len(all_cells[row])):
-            if all_cells[row][col]["is_date"]:
+            if all_cells[row][col]["is_date"] and len(all_cells[row][col]["value"]) > 0:
                 all_cells[row][col]["value"] = parse(all_cells[row][col]["value"]).date()
 
 def get_date_location(date, all_cells):
