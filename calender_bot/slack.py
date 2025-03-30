@@ -8,20 +8,27 @@ from datetime import datetime, date
 
 from calender_bot.config import * # yeah this is kinda awful but I don't feel like improving it with a real config file
 
-def _send_message_internal(channel_id, message):
+def _send_message_internal(channel_id, message, use_blocks, fallback_text):
     slack_token = os.getenv('slack_token')
     client = WebClient(token=slack_token)
+
+    if use_blocks:
+        return client.chat_postMessage(
+            channel=channel_id,
+            text=fallback_text,
+            blocks=message
+        )
     
     return client.chat_postMessage(
-            channel=channel_id,
-            text=message,
-        )
+        channel=channel_id,
+        text=message,
+    )
 
-def send_message(channel_id, message):
+def send_message(channel_id, message, use_blocks=False, fallback_text=None):
     """Send the given message to the specified channel and respect rate limits"""
     try:
         # Sending a message to the specified Slack channel
-        _send_message_internal(channel_id, message)
+        _send_message_internal(channel_id, message, use_blocks, fallback_text)
         logging.info(f"Message sent successfully")
     except SlackApiError as e:
         if e.response.status_code == 429:
@@ -29,9 +36,9 @@ def send_message(channel_id, message):
             delay = int(e.response.headers['Retry-After'])
             print(f"Rate limited. Retrying in {delay} seconds")
             time.sleep(delay)
-            _send_message_internal(channel_id, message)
+            _send_message_internal(channel_id, message, use_blocks, fallback_text)
         else:
-            logging.error(f"Error sending message: {e.response['error']}")
+            logging.error(f"Error sending message: {e}")
 
 def get_volunteer_list(volunteers):
     """Get a comma separated list of volunteers where the last volunteers are separated by ', and'"""
