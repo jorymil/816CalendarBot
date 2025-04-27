@@ -35,8 +35,8 @@ def get_sheet_data(api_key, sheet_id):
 
     response = r.json()
 
-    with open('output.txt', 'w') as f:
-        f.write(str(pformat(response)))
+    # with open('testoutput.txt', 'w') as f:
+    #     f.write(str(pformat(response)))
 
     row_data = response['sheets'][0]['data'][0]['rowData']
     row_metadata = response['sheets'][0]['data'][0]['rowMetadata']
@@ -131,13 +131,15 @@ def hide_rows(today = date.today()):
     frozen_row_count = default_sheet['properties']['gridProperties']['frozenRowCount']
     first_non_hidden_row_index = get_first_non_hidden_row(data, frozen_row_count)
 
-    print(first_non_hidden_row_index, today_row_index)
+    if (first_non_hidden_row_index < today_row_index):
+        print(first_non_hidden_row_index, today_row_index)
+        scopes = ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/spreadsheets"]
+        google_service_account_private_key = json.loads(os.getenv('google_service_account'))
 
-    scopes = ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/spreadsheets"]
-    google_service_account_private_key = json.loads(os.getenv('google_service_account'))
+        credentials = service_account.Credentials.from_service_account_info(google_service_account_private_key, scopes=scopes)
 
-    credentials = service_account.Credentials.from_service_account_info(google_service_account_private_key, scopes=scopes)
-
-    default_sheet_id = default_sheet['properties']['sheetId']
-    # SHEET_ID is technically the spreadsheet id, and default_sheet_id is the actual sheet id to modify
-    do_hide_rows_api_call(credentials, SHEET_ID, default_sheet_id, first_non_hidden_row_index, today_row_index)
+        default_sheet_id = default_sheet['properties']['sheetId']
+        # SHEET_ID is technically the spreadsheet id, and default_sheet_id is the actual sheet id to modify
+        do_hide_rows_api_call(credentials, SHEET_ID, default_sheet_id, first_non_hidden_row_index, today_row_index)
+    else:
+        print("no rows to hide")
