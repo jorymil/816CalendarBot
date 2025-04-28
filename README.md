@@ -1,5 +1,9 @@
 # 816 Calender Slack Bot
 
+## Test Locally:
+- `azurite` to start local storage service
+- `func start` to start functions
+
 ## Types of Messages
 - Warning
     - Warns if the shift does not enough volunteers.
