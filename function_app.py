@@ -3,6 +3,7 @@ import logging
 from datetime import date, timedelta
 import urllib.parse
 import json
+import os
 
 from calender_bot.calender_bot import send_slack_messages
 from calender_bot.hide_rows import hide_rows
@@ -37,7 +38,8 @@ def http_trigger_bot(req: func.HttpRequest) -> func.HttpResponse:
 @app.timer_trigger(schedule=" 0 0 15 * * 0", arg_name="timer", run_on_startup=False, use_monitor=False)
 def hide_calendar_rows(timer: func.TimerRequest) -> None:
     logging.info('Hid calendar rows begin execution')
-    hide_rows()
+    if os.getenv('do_hide_rows_on_schedule') == "True":
+        hide_rows()
 
 @app.route(route="http_trigger_hide_rows", auth_level=func.AuthLevel.ANONYMOUS)
 def http_trigger_hide_rows(req: func.HttpRequest) -> func.HttpResponse:
