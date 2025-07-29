@@ -166,6 +166,7 @@ def get_sheet_data(sheet_id, gid):
     key_param = f"key={api_key}"
     # what fields to return from the api
     field_mask = "fields=sheets.properties(title,sheetId,gridProperties(rowCount,columnCount))"
+
     r = requests.get(f"{base_url}?{key_param}&{field_mask}")
 
     sheets = r.json()['sheets']
