@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 
-from calender_bot.calender_bot import send_slack_messages
+from calendar_bot.calendar_bot import send_slack_messages
 
 
 if __name__ == "__main__":

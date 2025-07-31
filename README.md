@@ -1,4 +1,4 @@
-# 816 Calender Slack Bot
+# 816 Calendar Slack Bot
 
 ## Test Locally:
 - `azurite` to start local storage service
@@ -11,12 +11,12 @@
         - keyholders can desigate themselves on the calendar by putting '🔑' or 'keyholder' after their name
     - ![Warning Message Example](./pics/warning_msg.png "Warning Message Example")
 - Notes
-  - Sends any notes left in calender for the shift
+  - Sends any notes left in calendar for the shift
   - These notes must have a NON-GRAY background and volunteers signing up for shifts should use a gray/white background to avoid being counted as a note for the shift
   - ![Notes Message Example](./pics/notes_msg.png "Notes Message Example")
 
 
-## Configuartion
+## Configuration
 This bot was built to be as flexible as possilbe to allow for easy changes to be made for if example
 a new shift day is added or the frequency of messages needs to be adjusted. The bot can be configured
 by modifying the values in the file `config.py`
