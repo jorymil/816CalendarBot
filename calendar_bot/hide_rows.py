@@ -8,8 +8,8 @@ import httplib2
 from apiclient import discovery
 from google.oauth2 import service_account
 
-from calender_bot.calender_bot import get_default_sheet, get_cell_is_date
-from calender_bot.config import *
+from calendar_bot.calendar_bot import get_default_sheet, get_cell_is_date
+from calendar_bot.config import *
 
 ## shamelessly stolen from gspread
 def rowcol_to_a1(row: int, col: int) -> str:
@@ -103,7 +103,7 @@ def get_date_location(date, data):
         for col_idx, cell in enumerate(row['cells']):
             if cell['value'] == date:
                 return row_idx, col_idx  # Return the first occurrence
-    raise ValueError(f"Date: {date} not found in the calender")
+    raise ValueError(f"Date: {date} not found in the calendar")
 
 def get_first_non_hidden_row(data, frozen_row_count):
     for row_index, row in enumerate(data):

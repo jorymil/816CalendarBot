@@ -54,8 +54,8 @@ class Config:
     bike_school_reminder: List[MessageConfig]
 
 def get_config_fallback() -> Config:
-    with open("./calender_bot/config.json", "r") as file:
-        raw_config = os.getenv("calender_bot_config")
+    with open("./calendar_bot/config.json", "r") as file:
+        raw_config = os.getenv("calendar_bot_config")
         data_dict = None
         if raw_config:
             data_dict = json.loads(raw_config)

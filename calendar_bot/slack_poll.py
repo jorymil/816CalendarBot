@@ -3,8 +3,8 @@ import re
 import requests
 import json
 
-from calender_bot.config import *
-from calender_bot.slack import send_message
+from calendar_bot.config import *
+from calendar_bot.slack import send_message
 
 def get_question_section(question, notify_channel):
     message_text = f"<!channel> *{question}*" if notify_channel else f"*{question}*"

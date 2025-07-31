@@ -4,8 +4,8 @@ from dateutil.parser import parse
 from datetime import date, timedelta
 from typing import Callable
 
-from calender_bot.slack import send_volunteer_warning_message, send_special_note_message, send_bike_school_message, send_message
-from calender_bot.config import * # yeah this is kinda awful but I don't feel like improving it with a real config file
+from calendar_bot.slack import send_volunteer_warning_message, send_special_note_message, send_bike_school_message, send_message
+from calendar_bot.config import * # yeah this is kinda awful but I don't feel like improving it with a real config file
 
 ## shamelessly stolen from gspread
 def rowcol_to_a1(row: int, col: int) -> str:
@@ -143,7 +143,7 @@ def get_date_location(date, all_cells):
         for col_idx, cell in enumerate(row):
             if cell['value'] == date:
                 return row_idx, col_idx  # Return the first occurrence
-    raise ValueError(f"Date: {date} not found in the calender")
+    raise ValueError(f"Date: {date} not found in the calendar")
 
 def get_voluneers_for_date(date, all_cells):
     """
